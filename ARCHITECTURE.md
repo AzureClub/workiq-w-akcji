@@ -146,6 +146,33 @@ W praktyce na maszynie dewelopera wystarczy `az login` — dalej działa automat
 
 ---
 
+## Ekosystem Work IQ — pluginy i skille
+
+Pakiet `@microsoft/workiq` to nie tylko CLI i MCP server, ale cały marketplace pluginów z gotowymi skillami (każdy opisany w `SKILL.md`):
+
+| Plugin | Skill | Opis |
+|--------|-------|------|
+| **workiq** | `workiq` | Ogólne zapytania do M365 — maile, kalendarz, dokumenty, Teams, ludzie |
+| **workiq-productivity** | `action-item-extractor` | Wyciąganie action items ze spotkań i maili |
+| | `daily-outlook-triage` | Codzienny przegląd Outlooka |
+| | `email-analytics` | Analityka mailowa |
+| | `meeting-cost-calculator` | Kalkulator kosztów spotkań |
+| | `org-chart` | Struktura organizacyjna |
+| | `multi-plan-search` | Przeszukiwanie planów (Planner) |
+| | `site-explorer` | Eksploracja SharePoint |
+| | `channel-audit` | Audyt kanałów Teams |
+| | `channel-digest` | Podsumowanie kanałów Teams |
+| **microsoft-365-agents-toolkit** | `install-atk` | Instalacja Agents Toolkit |
+| | `declarative-agent-developer` | Budowanie deklaratywnych agentów M365 Copilot |
+| | `ui-widget-developer` | Tworzenie UI widgetów dla agentów |
+
+Wszystkie skille działają przez **MCP** (`workiq mcp`), nie przez CLI.  
+Każdy skill ma plik `SKILL.md` definiujący kiedy i jak agent powinien go wywoływać.
+
+Źródło: [github.com/microsoft/work-iq-mcp](https://github.com/microsoft/work-iq-mcp) → `plugins/*/skills/*/SKILL.md`
+
+---
+
 ## Potencjalne ulepszenia
 
 1. **Dynamiczna ścieżka** — zamiana hardcoded `workiq.cmd` na `shutil.which("workiq")`
