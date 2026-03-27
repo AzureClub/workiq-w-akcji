@@ -94,6 +94,58 @@ To wzorzec **RAG-like** (Retrieve → Augment → Generate):
 
 ---
 
+## Uwierzytelnienie
+
+Skrypt korzysta z **dwóch niezależnych mechanizmów autentykacji**:
+
+### Work IQ CLI — Entra ID (MSAL, interaktywne)
+
+```
+Pierwsze wywołanie `workiq ask`:
+  → Otwiera przeglądarkę z logowaniem Entra ID (M365)
+  → Użytkownik loguje się + consent na uprawnienia
+  → Token MSAL jest cachowany lokalnie
+
+Kolejne wywołania:
+  → Używa cached tokena (bez przeglądarki)
+  → Gdy token wygaśnie → ponowne logowanie w przeglądarce
+
+Wylogowanie:
+  → `workiq logout` czyści cached tokeny
+```
+
+| Opcja CLI              | Co robi                                              |
+|------------------------|------------------------------------------------------|
+| `--account <email>`    | Wybiera konkretne konto z cache (multi-account)      |
+| `workiq logout`        | Czyści cached tokeny                                 |
+| `workiq config set`    | Ustawia domyślne wartości (np. tenant-id)            |
+
+> ⚠️ **Ograniczenie**: Work IQ CLI wymaga interaktywnego logowania przez przeglądarkę.
+> W kontekście automatyzacji (CI/CD, serwer bez GUI) skrypt zawiśnie czekając
+> na logowanie. To rozwiązanie nadaje się do użytku deweloperskiego / demo.
+
+### Azure AI Foundry — DefaultAzureCredential
+
+```
+DefaultAzureCredential próbuje po kolei:
+  1. Environment variables (AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, ...)
+  2. Managed Identity (na Azure VM / Container App)
+  3. Azure CLI (`az login`)
+  4. Azure PowerShell (`Connect-AzAccount`)
+  5. Interactive browser (fallback)
+```
+
+W praktyce na maszynie dewelopera wystarczy `az login` — dalej działa automatycznie.
+
+### Podsumowanie auth w skrypcie
+
+| Komponent        | Mechanizm                  | Interaktywny? | CI/CD-ready?  |
+|------------------|----------------------------|---------------|---------------|
+| Work IQ CLI      | Entra ID / MSAL (browser)  | ✅ Tak        | ❌ Nie        |
+| Azure AI Foundry | DefaultAzureCredential     | Opcjonalnie   | ✅ Tak (MI/SP)|
+
+---
+
 ## Potencjalne ulepszenia
 
 1. **Dynamiczna ścieżka** — zamiana hardcoded `workiq.cmd` na `shutil.which("workiq")`
